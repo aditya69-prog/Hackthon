@@ -13,7 +13,9 @@
     "dev:server": "npm run dev --workspace=server",
     "build": "npm run build --workspace=client",
     "seed": "npm run seed --workspace=server",
-    "start:server": "npm run start --workspace=server"
+    "start:server": "npm run start --workspace=server",
+    "build:prod": "npm run build:prod --workspace=client && npm run start:prod --workspace=server",
+    "start:prod": "npm run start:prod --workspace=server"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

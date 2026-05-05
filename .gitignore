@@ -3,3 +3,15 @@ node_modules/
 *.log
 dist/
 .DS_Store
+logs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+client/dist/
+.env.local
+.env.*.local
+*.pem
+*.key
+

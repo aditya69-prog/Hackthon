@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: rnsconnect_mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: rnsconnect
+    volumes:
+      - mongo_data:/data/db
+
+  app:
+    build: .
+    container_name: rnsconnect_app
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongodb:27017/rnsconnect
+      - PORT=5000
+      - JWT_SECRET=${JWT_SECRET}
+      - CORS_ORIGINS=http://localhost:5000
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  mongo_data:
