@@ -42,11 +42,15 @@ export default function Signup() {
     setError('');
     setLoading(true);
     try {
-      await API.post('/auth/verify-otp', { email: form.email, otp });
-      navigate('/profile');
+      const verifyResponse = await API.post('/auth/verify-otp', { email: form.email, otp });
+      if (verifyResponse.status === 200) {
+        // Small delay to ensure server has updated user record
+        setTimeout(() => {
+          navigate('/profile');
+        }, 500);
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Verification failed.');
-    } finally {
       setLoading(false);
     }
   };

@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+// Determine API base URL based on environment
+const getAPIBaseURL = () => {
+  // Production: Use env variable or absolute URL
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Development: Use relative path (proxied by vite)
+  return '/api';
+};
+
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: getAPIBaseURL(),
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' }
 });

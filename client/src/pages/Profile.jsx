@@ -8,18 +8,35 @@ const allInterests = ['Coding', 'Music', 'Sports', 'Gaming', 'Art', 'Dance', 'Ph
 const allSkills = ['React', 'Python', 'Java', 'JavaScript', 'C++', 'Node.js', 'MongoDB', 'SQL', 'Figma', 'UI/UX', 'Machine Learning', 'Data Science', 'Flutter'];
 
 export default function Profile() {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, fetchUser } = useAuth();
   const [form, setForm] = useState({
     name: '', bio: '', department: 'CSE', year: 1, interests: [], skills: [], intent: 'friends', profilePhoto: ''
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    if (user) setForm({
-      name: user.name || '', bio: user.bio || '', department: user.department || 'CSE',
-      year: user.year || 1, interests: user.interests || [], skills: user.skills || [], intent: user.intent || 'friends', profilePhoto: user.profilePhoto || ''
-    });
+    const initializeForm = async () => {
+      if (!user) {
+        try {
+          await fetchUser();
+        } catch (err) {
+          console.error('Failed to fetch user:', err);
+        }
+      }
+      setIsInitializing(false);
+    };
+    initializeForm();
+  }, [fetchUser]);
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        name: user.name || '', bio: user.bio || '', department: user.department || 'CSE',
+        year: user.year || 1, interests: user.interests || [], skills: user.skills || [], intent: user.intent || 'friends', profilePhoto: user.profilePhoto || ''
+      });
+    }
   }, [user]);
 
   const toggleTag = (field, val) => {
@@ -54,6 +71,14 @@ export default function Profile() {
     } catch (err) { console.error(err); }
     finally { setSaving(false); }
   };
+
+  if (isInitializing) {
+    return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh'}}><div className="gradient-text" style={{fontSize:'1.5rem',fontWeight:700}}>Loading profile...</div></div>;
+  }
+
+  if (!user) {
+    return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column'}}><div className="gradient-text" style={{fontSize:'1.5rem',fontWeight:700}}>Error loading profile</div><p style={{marginTop:'16px',color:'var(--text-secondary)'}}>Please try logging in again</p></div>;
+  }
 
   return (
     <div className="page-container" style={{ maxWidth: '600px' }}>
